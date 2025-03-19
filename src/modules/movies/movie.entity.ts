@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Showtime } from '../showtimes/showtime.entity';
 
 @Entity('movies')
 export class Movie {
@@ -23,7 +25,7 @@ export class Movie {
   @Column({ type: 'decimal', precision: 3, scale: 1 })
   rating: number;
 
-  @Column()
+  @Column({ name: 'release_year' })
   releaseYear: number;
 
   @CreateDateColumn()
@@ -31,4 +33,7 @@ export class Movie {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @OneToMany(() => Showtime, (showtime) => showtime.movie, { cascade: true })
+  showtimes: Showtime[];
 }

@@ -9,25 +9,25 @@ export class MoviesController {
   constructor(private readonly moviesService: MoviesService) {}
 
   @Get('/all')
-  async getAllMovies(): Promise<Movie[]> {
-    return await this.moviesService.findAll();
+  getAllMovies(): Promise<Movie[]> {
+    return this.moviesService.findAll();
   }
 
   @Post()
-  async createMovie(@Body() movieData: CreateMovieDto): Promise<Movie> {
-    return await this.moviesService.create(movieData);
+  createMovie(@Body() movieData: CreateMovieDto): Promise<Movie> {
+    return this.moviesService.create(movieData);
   }
 
   @Post('/update/:movieTitle')
-  async updateMovie(
+  updateMovie(
     @Param('movieTitle') movieTitle: string,
     @Body() updateData: UpdateMovieDto,
   ) {
-    return await this.moviesService.update(movieTitle, updateData);
+    return this.moviesService.update(movieTitle, updateData);
   }
 
   @Delete('/:movieTitle')
-  async deleteMovie(@Param('movieTitle') movieTitle: string) {
-    return await this.moviesService.delete(movieTitle);
+  deleteMovie(@Param('movieTitle') movieTitle: string) {
+    return this.moviesService.delete(movieTitle);
   }
 }

@@ -3,6 +3,7 @@ import { MoviesModule } from './modules/movies/movies.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule } from '@nestjs/config';
 import { typeOrmConfig } from './config/database.config';
+import { ShowtimesModule } from './modules/showtimes/showtimes.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { typeOrmConfig } from './config/database.config';
     }),
     TypeOrmModule.forRoot(typeOrmConfig),
     MoviesModule,
+    ShowtimesModule,
   ],
   controllers: [],
   providers: [],
