@@ -1,7 +1,8 @@
 import { Controller, Delete, Get, Post, Body, Param } from '@nestjs/common';
-import { CreateMovieDto } from './createMovie.dto';
+import { CreateMovieDto } from './dtos/create-movie.dto';
 import { MoviesService } from './movies.service';
 import { Movie } from './movie.entity';
+import { UpdateMovieDto } from './dtos/update-movie.dto';
 
 @Controller('/movies')
 export class MoviesController {
@@ -9,24 +10,24 @@ export class MoviesController {
 
   @Get('/all')
   async getAllMovies(): Promise<Movie[]> {
-    return this.moviesService.findAll();
+    return await this.moviesService.findAll();
   }
 
   @Post()
   async createMovie(@Body() movieData: CreateMovieDto): Promise<Movie> {
-    return this.moviesService.create(movieData);
+    return await this.moviesService.create(movieData);
   }
 
   @Post('/update/:movieTitle')
-  updateMovie(
+  async updateMovie(
     @Param('movieTitle') movieTitle: string,
-    @Body() updateData: any,
+    @Body() updateData: UpdateMovieDto,
   ) {
-    console.log(movieTitle);
+    return await this.moviesService.update(movieTitle, updateData);
   }
 
-  @Delete('/:id')
-  deleteMovie(@Param('id') id: string) {
-    console.log(id);
+  @Delete('/:movieTitle')
+  async deleteMovie(@Param('movieTitle') movieTitle: string) {
+    return await this.moviesService.delete(movieTitle);
   }
 }
