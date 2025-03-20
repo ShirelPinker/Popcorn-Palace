@@ -1,40 +1,43 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ShowtimeRepository } from './showtimes.repository';
 import { Showtime } from './showtime.entity';
 import { CreateShowtimeDto } from './dtos/create-showtime.dto';
 import { UpdateShowtimeDto } from './dtos/update-showtime.dto';
 
 @Injectable()
 export class ShowtimesService {
-  constructor(
-    @InjectRepository(Showtime)
-    private showtimeRepository: Repository<Showtime>,
-  ) {}
+  constructor(private readonly showtimeRepository: ShowtimeRepository) {}
 
-  async findOne(showtimeId: number): Promise<Showtime> {
-    const showtime = await this.showtimeRepository.findOne({
-      where: { id: showtimeId },
-    });
+  async getById(showtimeId: number): Promise<Showtime> {
+    const showtime = await this.showtimeRepository.getById(showtimeId);
     if (!showtime) {
-      throw new Error('Showtime not found');
+      throw new NotFoundException('Showtime not found');
     }
     return showtime;
   }
 
   async create(showtimeData: CreateShowtimeDto): Promise<Showtime> {
-    const showtime = this.showtimeRepository.create(showtimeData);
-    return this.showtimeRepository.save(showtime);
+    const { theater, startTime, endTime } = showtimeData;
+
+    const overlapExists = await this.showtimeRepository.isShowtimeOverlapping(
+      theater,
+      startTime,
+      endTime,
+    );
+
+    if (overlapExists) {
+      throw new Error('Showtime overlaps with an existing one.');
+    }
+
+    const newShowtime = this.showtimeRepository.create(showtimeData);
+    return this.showtimeRepository.saveShowtime(newShowtime);
   }
 
-  async update(
-    showtimeId: number,
-    updateData: UpdateShowtimeDto,
-  ): Promise<UpdateResult> {
-    return this.showtimeRepository.update(showtimeId, updateData);
+  async update(showtimeId: number, updateData: UpdateShowtimeDto) {
+    return this.showtimeRepository.updateShowtime(showtimeId, updateData);
   }
 
-  async delete(showtimeId: number): Promise<DeleteResult> {
-    return this.showtimeRepository.delete({ id: showtimeId });
+  async delete(showtimeId: number) {
+    return this.showtimeRepository.deleteShowtime(showtimeId);
   }
 }

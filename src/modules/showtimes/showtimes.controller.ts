@@ -12,7 +12,7 @@ export class ShowtimesController {
   async getShowtime(
     @Param('showtimeId') showtimeId: string,
   ): Promise<Showtime> {
-    return this.showtimesService.findOne(Number(showtimeId));
+    return this.showtimesService.getById(Number(showtimeId));
   }
 
   @Post()

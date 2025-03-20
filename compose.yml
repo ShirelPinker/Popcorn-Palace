@@ -14,3 +14,14 @@ services:
       - target: 5432
         published: 5432
         protocol: tcp
+  db_e2e:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: popcorn-palace-e2e
+      POSTGRES_PASSWORD: popcorn-palace-e2e
+      POSTGRES_DB: popcorn-palace-e2e
+    ports:
+      - target: 5432
+        published: 5433
+        protocol: tcp
