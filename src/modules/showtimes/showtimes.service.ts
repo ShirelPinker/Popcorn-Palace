@@ -1,42 +1,58 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ShowtimeRepository } from './showtimes.repository';
 import { Showtime } from './showtime.entity';
-import { CreateShowtimeDto } from './dtos/create-showtime.dto';
-import { UpdateShowtimeDto } from './dtos/update-showtime.dto';
+import { ShowtimeDto } from './dtos/showtime.dto';
+import { DeleteResult, UpdateResult } from 'typeorm';
 
 @Injectable()
 export class ShowtimesService {
-  constructor(private readonly showtimeRepository: ShowtimeRepository) {}
+  constructor(private showtimeRepository: ShowtimeRepository) {}
 
   async getById(showtimeId: number): Promise<Showtime> {
-    const showtime = await this.showtimeRepository.getById(showtimeId);
-    if (!showtime) {
-      throw new NotFoundException('Showtime not found');
-    }
-    return showtime;
+    return this.showtimeRepository.getById(showtimeId);
   }
 
-  async create(showtimeData: CreateShowtimeDto): Promise<Showtime> {
-    const { theater, startTime, endTime } = showtimeData;
-
-    const overlapExists = await this.showtimeRepository.isShowtimeOverlapping(
-      theater,
-      startTime,
-      endTime,
-    );
-
-    if (overlapExists) {
-      throw new Error('Showtime overlaps with an existing one.');
-    }
-
-    return this.showtimeRepository.create(showtimeData);
+  async create(showtimeDto: ShowtimeDto): Promise<Showtime> {
+    await this.assertNoOverlappingShowtime(showtimeDto);
+    return this.showtimeRepository.create(showtimeDto);
   }
 
-  async update(showtimeId: number, updateData: UpdateShowtimeDto) {
-    return this.showtimeRepository.update(showtimeId, updateData);
+  async update(
+    showtimeId: number,
+    showtimeDto: ShowtimeDto,
+  ): Promise<UpdateResult> {
+    await this.assertNoOverlappingShowtime(showtimeDto, showtimeId);
+    return this.showtimeRepository.update(showtimeId, showtimeDto);
   }
 
-  async delete(showtimeId: number) {
+  async delete(showtimeId: number): Promise<DeleteResult> {
     return this.showtimeRepository.delete(showtimeId);
+  }
+
+  private async assertNoOverlappingShowtime(
+    showtimeDto: ShowtimeDto,
+    showtimeId?: number,
+  ): Promise<void> {
+    const isOverlapping = await this.isOverlapping(showtimeDto, showtimeId);
+    if (isOverlapping) {
+      throw new BadRequestException('Showtime overlaps with an existing one.');
+    }
+  }
+
+  private async isOverlapping(
+    showtimeDto: ShowtimeDto,
+    showtimeId?: number,
+  ): Promise<boolean> {
+    const { theater, startTime, endTime } = showtimeDto;
+
+    const overlappingShowtimes =
+      await this.showtimeRepository.getOverlappingShowtimes(
+        theater,
+        startTime,
+        endTime,
+        showtimeId,
+      );
+
+    return overlappingShowtimes.length > 0;
   }
 }

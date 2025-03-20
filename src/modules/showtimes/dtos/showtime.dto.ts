@@ -1,6 +1,6 @@
 import { IsString, IsNumber, IsDateString } from 'class-validator';
 
-export class CreateShowtimeDto {
+export class ShowtimeDto {
   @IsNumber()
   movieId: number;
 

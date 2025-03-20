@@ -7,7 +7,6 @@ import { MoviesRepository } from './movies.repository';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Movie])],
-  exports: [TypeOrmModule],
   controllers: [MoviesController],
   providers: [MoviesService, MoviesRepository],
 })

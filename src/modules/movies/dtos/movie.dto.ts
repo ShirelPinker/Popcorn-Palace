@@ -1,6 +1,6 @@
 import { IsString, IsNumber, Min, Max } from 'class-validator';
 
-export class CreateMovieDto {
+export class MovieDto {
   @IsString()
   title: string;
 
@@ -8,15 +8,15 @@ export class CreateMovieDto {
   genre: string;
 
   @IsNumber()
-  @Min(1)
-  duration: number; // in minutes
+  @Min(0)
+  duration: number;
 
   @IsNumber()
   @Min(0)
   @Max(10)
-  rating: number; // out of 10
+  rating: number;
 
   @IsNumber()
-  @Min(1888) // First movie ever made was in 1888
+  @Min(1700)
   releaseYear: number;
 }

@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Movie } from './movie.entity';
+import { MovieDto } from './dtos/movie.dto';
 
 @Injectable()
 export class MoviesRepository {
@@ -14,16 +15,19 @@ export class MoviesRepository {
     return this.movieRepository.find();
   }
 
-  async create(movieData: Partial<Movie>): Promise<Movie> {
-    const movie = this.movieRepository.create(movieData);
+  async create(movieDto: MovieDto): Promise<Movie> {
+    const movie = this.movieRepository.create(movieDto);
     return this.movieRepository.save(movie);
   }
 
-  async update(movieTitle: string, updateData: Partial<Movie>) {
-    return this.movieRepository.update({ title: movieTitle }, updateData);
+  async update(
+    movieTitle: string,
+    movieDto: MovieDto,
+  ): Promise<UpdateResult> {
+    return this.movieRepository.update({ title: movieTitle }, movieDto);
   }
 
-  async delete(movieTitle: string) {
+  async delete(movieTitle: string): Promise<DeleteResult> {
     return this.movieRepository.delete({ title: movieTitle });
   }
 }

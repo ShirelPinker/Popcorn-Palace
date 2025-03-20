@@ -1,37 +1,46 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { ShowtimesService } from './showtimes.service';
-import { CreateShowtimeDto } from './dtos/create-showtime.dto';
+import { ShowtimeDto } from './dtos/showtime.dto';
 import { Showtime } from './showtime.entity';
-import { UpdateShowtimeDto } from './dtos/update-showtime.dto';
 
 @Controller('showtimes')
 export class ShowtimesController {
-  constructor(private readonly showtimesService: ShowtimesService) {}
+  constructor(private showtimesService: ShowtimesService) {}
 
   @Get('/:showtimeId')
   async getShowtime(
-    @Param('showtimeId') showtimeId: string,
+    @Param('showtimeId', ParseIntPipe) showtimeId: number,
   ): Promise<Showtime> {
-    return this.showtimesService.getById(Number(showtimeId));
+    return this.showtimesService.getById(showtimeId);
   }
 
   @Post()
-  async createShowtime(
-    @Body() showtimeData: CreateShowtimeDto,
-  ): Promise<Showtime> {
-    return this.showtimesService.create(showtimeData);
+  async createShowtime(@Body() showtimeDto: ShowtimeDto): Promise<Showtime> {
+    return this.showtimesService.create(showtimeDto);
   }
 
   @Post('/update/:showtimeId')
-  async updateMovie(
-    @Param('showtimeId') showtimeId: string,
-    @Body() updateData: UpdateShowtimeDto,
-  ) {
-    return this.showtimesService.update(Number(showtimeId), updateData);
+  async updateShowtime(
+    @Param('showtimeId', ParseIntPipe) showtimeId: number,
+    @Body() showtimeDto: ShowtimeDto,
+  ): Promise<void> {
+    await this.showtimesService.update(showtimeId, showtimeDto);
+    return;
   }
 
   @Delete('/:showtimeId')
-  async deleteMovie(@Param('showtimeId') showtimeId: string) {
-    return this.showtimesService.delete(Number(showtimeId));
+  async deleteShowtime(
+    @Param('showtimeId', ParseIntPipe) showtimeId: number,
+  ): Promise<void> {
+    await this.showtimesService.delete(showtimeId);
+    return;
   }
 }

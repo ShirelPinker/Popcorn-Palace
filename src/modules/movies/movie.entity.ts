@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Showtime } from '../showtimes/showtime.entity';
 
 @Entity('movies')
@@ -13,7 +6,7 @@ export class Movie {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true }) // Ensures uniqueness since we use the title as identifier for Update and Delete
   title: string;
 
   @Column()
@@ -27,12 +20,6 @@ export class Movie {
 
   @Column({ name: 'release_year' })
   releaseYear: number;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @OneToMany(() => Showtime, (showtime) => showtime.movie, { cascade: true })
   showtimes: Showtime[];

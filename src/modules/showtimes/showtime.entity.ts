@@ -4,8 +4,10 @@ import {
   Column,
   ManyToOne,
   JoinColumn,
+  OneToMany,
 } from 'typeorm';
 import { Movie } from '../movies/movie.entity';
+import { Booking } from '../bookings/booking.entity';
 
 @Entity('showtimes')
 export class Showtime {
@@ -30,4 +32,7 @@ export class Showtime {
 
   @Column({ type: 'timestamp', name: 'end_time' })
   endTime: Date;
+
+  @OneToMany(() => Booking, (booking) => booking.showtime, { cascade: true })
+  bookings: Booking[];
 }

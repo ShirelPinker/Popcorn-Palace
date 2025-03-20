@@ -8,5 +8,5 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   password: process.env.DB_PASSWORD || 'popcorn-palace',
   database: process.env.DB_NAME || 'popcorn-palace',
   entities: [__dirname + '/../**/*.entity.{ts,js}'],
-  synchronize: true, // Set to false in production and use migrations
+  synchronize: true,
 };
