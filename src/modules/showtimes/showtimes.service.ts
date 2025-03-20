@@ -29,15 +29,14 @@ export class ShowtimesService {
       throw new Error('Showtime overlaps with an existing one.');
     }
 
-    const newShowtime = this.showtimeRepository.create(showtimeData);
-    return this.showtimeRepository.saveShowtime(newShowtime);
+    return this.showtimeRepository.create(showtimeData);
   }
 
   async update(showtimeId: number, updateData: UpdateShowtimeDto) {
-    return this.showtimeRepository.updateShowtime(showtimeId, updateData);
+    return this.showtimeRepository.update(showtimeId, updateData);
   }
 
   async delete(showtimeId: number) {
-    return this.showtimeRepository.deleteShowtime(showtimeId);
+    return this.showtimeRepository.delete(showtimeId);
   }
 }

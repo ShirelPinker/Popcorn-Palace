@@ -1,15 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Showtime } from './showtime.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { CreateShowtimeDto } from './dtos/create-showtime.dto';
 
 @Injectable()
-export class ShowtimeRepository extends Repository<Showtime> {
-  constructor(private dataSource: DataSource) {
-    super(Showtime, dataSource.createEntityManager());
-  }
+export class ShowtimeRepository {
+  constructor(
+    @InjectRepository(Showtime)
+    private readonly showtimeRepository: Repository<Showtime>,
+  ) {}
 
   async getById(showtimeId: number): Promise<Showtime | null> {
-    return this.findOne({ where: { id: showtimeId } });
+    return this.showtimeRepository.findOne({ where: { id: showtimeId } });
   }
 
   async isShowtimeOverlapping(
@@ -17,7 +20,8 @@ export class ShowtimeRepository extends Repository<Showtime> {
     startTime: string,
     endTime: string,
   ): Promise<boolean> {
-    const count = await this.createQueryBuilder('showtimes')
+    const count = await this.showtimeRepository
+      .createQueryBuilder('showtimes')
       .where('showtimes.theater = :theater', { theater })
       .andWhere('showtimes.start_time < :endTime', { endTime })
       .andWhere('showtimes.end_time > :startTime', { startTime })
@@ -26,15 +30,16 @@ export class ShowtimeRepository extends Repository<Showtime> {
     return count > 0;
   }
 
-  async saveShowtime(showtime: Showtime): Promise<Showtime> {
-    return this.save(showtime);
+  async create(showtimeData: CreateShowtimeDto): Promise<Showtime> {
+    const showtime = this.showtimeRepository.create(showtimeData);
+    return this.showtimeRepository.save(showtime);
   }
 
-  async updateShowtime(showtimeId: number, updateData: Partial<Showtime>) {
-    return this.update(showtimeId, updateData);
+  async update(showtimeId: number, updateData: Partial<Showtime>) {
+    return this.showtimeRepository.update(showtimeId, updateData);
   }
 
-  async deleteShowtime(showtimeId: number) {
-    return this.delete({ id: showtimeId });
+  async delete(showtimeId: number) {
+    return this.showtimeRepository.delete({ id: showtimeId });
   }
 }
