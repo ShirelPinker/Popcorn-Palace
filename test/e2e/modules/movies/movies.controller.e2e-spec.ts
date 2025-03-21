@@ -4,6 +4,7 @@ import * as request from 'supertest';
 import { AppModule } from '../../../../src/app.module';
 import { TestUtils } from '../../helpers/test.utils';
 import { MovieDto } from '../../../../src/modules/movies/dtos/movie.dto';
+import { EntityNotFoundFilter } from '../../../../src/filters/entity-not-found.filter';
 
 describe('MoviesController (e2e)', () => {
   let app: INestApplication;
@@ -13,13 +14,10 @@ describe('MoviesController (e2e)', () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
     app = moduleFixture.createNestApplication();
-
     app.useGlobalPipes(new ValidationPipe());
-
+    app.useGlobalFilters(new EntityNotFoundFilter());
     await app.init();
-
     testUtils = new TestUtils(moduleFixture);
   });
 
@@ -35,7 +33,7 @@ describe('MoviesController (e2e)', () => {
       expect(response.body).toEqual([]);
     });
 
-    it('should return movies after insertion', async () => {
+    it('should return movies successfully', async () => {
       await testUtils.saveMovie({
         title: 'Movie 1',
         genre: 'Action',
@@ -139,7 +137,7 @@ describe('MoviesController (e2e)', () => {
         .send(movieDto);
 
       expect(response.status).toBe(404);
-      expect(response.body.message).toContain('Movie not found');
+      expect(response.body.message).toContain('Entity not found');
     });
 
     it('should return 400 when movie is invalid', async () => {
@@ -184,10 +182,10 @@ describe('MoviesController (e2e)', () => {
       );
 
       expect(response.status).toBe(200);
-      const updatedMovie = await testUtils.findMovieByTitle(
+      const deletedMovie = await testUtils.findMovieByTitle(
         existingMovie.title,
       );
-      expect(updatedMovie).toBeNull();
+      expect(deletedMovie).toBeNull();
     });
   });
 });

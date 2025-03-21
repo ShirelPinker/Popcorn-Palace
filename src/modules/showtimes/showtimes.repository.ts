@@ -12,7 +12,7 @@ export class ShowtimeRepository {
   ) {}
 
   async getById(showtimeId: number): Promise<Showtime | null> {
-    return this.showtimeRepository.findOneBy({ id: showtimeId });
+    return this.showtimeRepository.findOneByOrFail({ id: showtimeId });
   }
 
   async create(showtimeDto: ShowtimeDto): Promise<Showtime> {

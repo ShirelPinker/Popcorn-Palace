@@ -17,10 +17,7 @@ export class MoviesService {
   }
 
   async update(movieTitle: string, movieDto: MovieDto): Promise<UpdateResult> {
-    const movie = await this.findMovieByTitle(movieTitle);
-    if (!movie) {
-      throw new NotFoundException('Movie not found');
-    }
+    await this.assertMovieExists(movieTitle);
     return this.moviesRepository.update(movieTitle, movieDto);
   }
 
@@ -28,7 +25,7 @@ export class MoviesService {
     return this.moviesRepository.delete(movieTitle);
   }
 
-  private async findMovieByTitle(movieTitle: string): Promise<Movie | null> {
-    return this.moviesRepository.findOne(movieTitle);
+  private async assertMovieExists(movieTitle: string): Promise<Movie | null> {
+    return this.moviesRepository.findOneOrFail(movieTitle);
   }
 }

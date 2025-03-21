@@ -2,11 +2,11 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
+  Get, HttpCode,
   Param,
   ParseIntPipe,
-  Post,
-} from '@nestjs/common';
+  Post
+} from "@nestjs/common";
 import { ShowtimesService } from './showtimes.service';
 import { ShowtimeDto } from './dtos/showtime.dto';
 import { Showtime } from './showtime.entity';
@@ -23,11 +23,13 @@ export class ShowtimesController {
   }
 
   @Post()
+  @HttpCode(200)
   async createShowtime(@Body() showtimeDto: ShowtimeDto): Promise<Showtime> {
     return this.showtimesService.create(showtimeDto);
   }
 
   @Post('/update/:showtimeId')
+  @HttpCode(200)
   async updateShowtime(
     @Param('showtimeId', ParseIntPipe) showtimeId: number,
     @Body() showtimeDto: ShowtimeDto,

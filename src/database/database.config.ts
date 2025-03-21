@@ -9,5 +9,5 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   database: process.env.DB_NAME || 'popcorn-palace',
   entities: [__dirname + '/../**/*.entity.{ts,js}'],
   synchronize: true,
-  dropSchema: true,
+  dropSchema: true, // For development only
 };

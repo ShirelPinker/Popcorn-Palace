@@ -1,4 +1,4 @@
-import { Controller, Post, Body } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode } from '@nestjs/common';
 import { BookingService } from './booking.service';
 import { BookingDto } from './dtos/booking.dto';
 import { BookingResponseDto } from './dtos/booking-response.dto';
@@ -8,6 +8,7 @@ export class BookingController {
   constructor(private readonly bookingService: BookingService) {}
 
   @Post()
+  @HttpCode(200)
   async createBooking(
     @Body() bookingDto: BookingDto,
   ): Promise<BookingResponseDto> {

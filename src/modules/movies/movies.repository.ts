@@ -28,7 +28,7 @@ export class MoviesRepository {
     return this.movieRepository.delete({ title: movieTitle });
   }
 
-  async findOne(movieTitle: string) {
-    return this.movieRepository.findOne({ where: { title: movieTitle } });
+  async findOneOrFail(movieTitle: string) {
+    return this.movieRepository.findOneByOrFail({ title: movieTitle });
   }
 }
