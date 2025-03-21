@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Body, Param, HttpCode } from "@nestjs/common";
 import { MovieDto } from './dtos/movie.dto';
 import { MoviesService } from './movies.service';
 import { Movie } from './movie.entity';
@@ -13,11 +13,13 @@ export class MoviesController {
   }
 
   @Post()
+  @HttpCode(200)
   createMovie(@Body() movieDto: MovieDto): Promise<Movie> {
     return this.moviesService.create(movieDto);
   }
 
   @Post('/update/:movieTitle')
+  @HttpCode(200)
   updateMovie(
     @Param('movieTitle') movieTitle: string,
     @Body() movieDto: MovieDto,

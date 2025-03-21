@@ -20,14 +20,15 @@ export class MoviesRepository {
     return this.movieRepository.save(movie);
   }
 
-  async update(
-    movieTitle: string,
-    movieDto: MovieDto,
-  ): Promise<UpdateResult> {
+  async update(movieTitle: string, movieDto: MovieDto): Promise<UpdateResult> {
     return this.movieRepository.update({ title: movieTitle }, movieDto);
   }
 
   async delete(movieTitle: string): Promise<DeleteResult> {
     return this.movieRepository.delete({ title: movieTitle });
+  }
+
+  async findOne(movieTitle: string) {
+    return this.movieRepository.findOne({ where: { title: movieTitle } });
   }
 }
